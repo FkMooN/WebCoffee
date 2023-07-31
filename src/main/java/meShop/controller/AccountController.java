@@ -164,7 +164,7 @@ public String showResetPasswordForm(@Param(value = "token") String token, Model 
 		Transport.send(msg);   
 	 }
 	@GetMapping(value = "view/{page}")
-	String getAccountInfo(Model model,@PathVariable(value = "page",required= false) String page) {
+	String getAccountInfo(Model model,@PathVariable(value = "page",required= false) String page,@RequestParam(name = "message",defaultValue = "") String message) {
 		if(!sessionService.checkSecurity()){
 			return "redirect:/account/"+page+"/login";
 		}
@@ -179,6 +179,18 @@ public String showResetPasswordForm(@Param(value = "token") String token, Model 
 		}
 		System.out.println("page" +page);
 		model.addAttribute("page",page );
+		switch (message) {
+		case "1":
+			message="Số điện thoại không hợp lệ";
+			break;
+		default:
+			break;
+			case "2":
+			message="Tên đầy đủ không hợp lệ";
+			break;
+		}
+	
+		model.addAttribute("message",message );
 		return "Account";
 	}
 @GetMapping(value = "/login/{page}")
@@ -229,6 +241,14 @@ String getLoginPage(Model model){
 	@PostMapping("/save")
 	String saveAndGetPrePage(Model model,UserModel user,@RequestParam("page") String page,@RequestParam("userName") String userName) {
 		System.out.println("truyen len "+user.toString());
+		if(!AccountValidator.isValidPhoneNumber(user.getPhone())) 
+		{
+			return "redirect:/account/view/5?message=1";
+		}
+		if(!AccountValidator.isOnlyChaAndSpace(user.getFullName())) 
+		{
+			return "redirect:/account/view/5?message=2";
+		}
 		UserModel oldUser=userService.getUserByUserName(userName);
 		oldUser.setFullName(user.getFullName());
 		oldUser.setAddress(user.getAddress());

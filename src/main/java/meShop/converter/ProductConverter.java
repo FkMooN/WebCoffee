@@ -28,11 +28,13 @@ public class ProductConverter {
 		if(model.getCategory()!=null) {
 			dto.setCategoryId(model.getCategory().getId().toString());
 		}
-		dto.setStrImage(Base64.getEncoder().encodeToString(model.getImage()));
-		dto.setStrImage2(Base64.getEncoder().encodeToString(model.getImage2()));
-		dto.setStrImage3(Base64.getEncoder().encodeToString(model.getImage3()));
 		dto.setPrice(model.getPrice());
 		dto.setTitle(model.getTitle());
+		if(model.getImage()!=null)
+		dto.setStrImage(Base64.getEncoder().encodeToString(model.getImage()));
+		
+		if(model.getImage2()!=null) dto.setStrImage2(Base64.getEncoder().encodeToString(model.getImage2()));
+		if(model.getImage3()!=null) dto.setStrImage3(Base64.getEncoder().encodeToString(model.getImage3()));
 		dto.setImage(model.getImage());
 		dto.setImage2(model.getImage2());
 		dto.setImage3(model.getImage3());

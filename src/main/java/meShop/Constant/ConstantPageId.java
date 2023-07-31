@@ -17,6 +17,7 @@ public class ConstantPageId {
 	public static final int ACCOUNT_PAGE=11;
 	public static final int ORDER_ACCEPTED_SHIPPER_PAGE=12;
 	public static final int ORDER_DELIVERI_SHIPPER_PAGE=13;
+	public static final int ORDER_FAILED_SHIPPER_PAGE=14;
 	public static String getPageUrl(int pgaeId) {
 		switch (pgaeId) {
 		case CHECKOUT_PAGE:
@@ -43,6 +44,8 @@ public class ConstantPageId {
 			return "shipper/views";
 		case ORDER_DELIVERI_SHIPPER_PAGE:
 			return "shipper/views?page=me";
+		case ORDER_FAILED_SHIPPER_PAGE:
+			return "shipper/views?page=failed";
 		case CHAT_PAGE:
 			return "real";
 		default:
@@ -103,6 +106,8 @@ public class ConstantPageId {
 			return ORDER_ACCEPTED_SHIPPER_PAGE;
 			case "shipper/views?page=me":
 			return ORDER_DELIVERI_SHIPPER_PAGE;
+			case "shipper/views?page=failed":
+			return ORDER_FAILED_SHIPPER_PAGE;
 		default:
 			return HOME_PAGE;
 		}

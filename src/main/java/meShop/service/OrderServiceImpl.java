@@ -78,7 +78,18 @@ public class OrderServiceImpl implements OrderService{
 
 	@Override
 	public List<OrderModel> findOrdersByUserId(String userId) {
-		return orderRepository.findOrdersByUserId((long) Integer.valueOf(userId));
+		List<OrderModel> models= orderRepository.findOrdersByUserId((long) Integer.valueOf(userId));
+		List<OrderModel> dtos=new ArrayList<>();
+		models.forEach(model->{
+			if(model.getPaypalOrderId()!=null){
+				if(model.getPaypalOrderStatus().equals(OrderStatus.APPROVED.toString())){
+					dtos.add(model);
+				}
+			}
+			else
+			dtos.add(model);
+		});
+		return dtos;
 	}
 
 	@Override

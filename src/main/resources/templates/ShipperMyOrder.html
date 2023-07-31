@@ -39,25 +39,17 @@ popUpWin = open(URLStr,'popUpWin', 'toolbar=no,location=no,directories=no,status
                 <i class="icon-reorder shaded"></i>
             </a>
 
-              <a class="brand" href="/index.html">
-                    Shipper
-              </a>
+            
+			<a class="brand" th:href=@{/shipper/views}>
+				Shipper
+		  </a>
 
             <div class="nav-collapse collapse navbar-inverse-collapse">
                 <ul class="nav pull-right">
                     <li><a href="#">
                         Hello <span th:text=${userName}></span>
                     </a></li>
-                    <li class="nav-user dropdown">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                            <b class="caret"></b>
-                        </a>
-                        <ul class="dropdown-menu">
-                            <li><a href="/change-password.html">Change Password</a></li>
-                            <li class="divider"></li>
-                            <li><a href="/logout.html">Logout</a></li>
-                        </ul>
-                    </li>
+                
                 </ul>
             </div><!-- /.nav-collapse -->
         </div>
@@ -81,6 +73,12 @@ popUpWin = open(URLStr,'popUpWin', 'toolbar=no,location=no,directories=no,status
                 <a href="/shipper/views?page=me">
                     <i class="menu-icon icon-group"></i>
                     My Orders
+                </a>
+            </li>
+			<li>
+                <a href="/shipper/views?page=failed">
+                    <i class="menu-icon icon-group"></i>
+                    Error Orders
                 </a>
             </li>
         </ul>
@@ -108,6 +106,9 @@ popUpWin = open(URLStr,'popUpWin', 'toolbar=no,location=no,directories=no,status
 	    <div class="module">
 							<div class="module-head">
 								<h3>Pending Orders</h3>
+								<div class="module_search">
+									<input style="margin:0" class="m-0" type="text" placeholder="Tìm kiếm">
+								</div>
 							</div>
 							<div class="module-body table">
 	
@@ -134,9 +135,9 @@ popUpWin = open(URLStr,'popUpWin', 'toolbar=no,location=no,directories=no,status
 <!-- 							 -->
 								<tr th:each="order, iter : ${orders}" >
 									<td th:text=${iter.count}></td>
-									<td th:text=${users[iter.count-1].userName}></td>
-									<td th:text=${users[iter.count-1].email}></td>
-									<td th:text=${users[iter.count-1].phone}></td>
+									<td class="search_name" th:text=${users[iter.count-1].userName}></td>
+									<td class="search_email" th:text=${users[iter.count-1].email}></td>
+									<td class="search_phone" th:text=${users[iter.count-1].phone}></td>
 									<td th:text=${order.receiverAddress}></td>
 									<td><button style="display: inline-block;width: 100%;" th:onclick="showOrderDetail([[${iter.index}]])">Xem</button></td>
 									
@@ -231,7 +232,53 @@ popUpWin = open(URLStr,'popUpWin', 'toolbar=no,location=no,directories=no,status
 	</div>
 	</div>
 	<script th:inline="javascript">
-		
+		const search_key = document.querySelectorAll('.search_value')
+			const module_search = document.querySelector('.module_search input')
+			const search_name = document.querySelectorAll('.search_name')
+			const search_phone = document.querySelectorAll('.search_phone')
+			const search_email = document.querySelectorAll('.search_email')
+	module_search.addEventListener('keypress',(e)=>
+	{
+		const value = e.target.value.toLowerCase().trim();
+
+		if(e.keyCode===13||e.which===13)
+ 		{
+			console.log("search_name.length: "+search_name.length)
+			var len=search_name.length;
+			for (let i = 0; i < len; i++) {
+				var search_name_item=search_name[i];
+				var search_phone_item=search_phone[i];
+				var search_email_item=search_email[i];
+				console.log("search_name_item"+search_name_item)
+				if(search_name_item.innerHTML.toLowerCase().search(value)==-1&&search_phone_item.innerHTML.toLowerCase().search(value)==-1&&search_email_item.innerHTML.toLowerCase().search(value)==-1)
+				{
+					search_name_item.parentElement.style.display='none'
+				}
+				else {
+					search_name_item.parentElement.style.display='table-row'
+				}
+			}
+			// search_name.forEach(i=>
+			// {
+				
+			// 	if(i.innerHTML.toLowerCase().search(value)!=-1)
+			// 	{
+				
+			// 		i.parentElement.style.display='table-row'
+			// 		console.log(i.innerHTML)
+			// 	}
+			// 	else 
+			// 	{
+	
+			// 		i.parentElement.style.display='none'
+				
+
+			// 	}
+				
+			// })
+
+  		}
+	})
 		const modal__admin = document.querySelector('.modal__admin')
 		const modal__admin_container = document.querySelector('.modal__admin-container')
 		const shipper_table = document.querySelector('.shipper_table')
@@ -344,6 +391,25 @@ popUpWin = open(URLStr,'popUpWin', 'toolbar=no,location=no,directories=no,status
 		  }); 
 		  if (response.status == 200) {
             confirm('Are You Sure About That?')
+		    response.json().then(() => updateView(action,orders[index].id));
+		    //reload neu update ve 0
+		    //if(event.target.value==0){
+				//location.reload();
+			//}
+		    }
+		}
+		else
+		{
+			var orders=/*[[${orders}]]*/ 
+
+		let formData = new FormData(); 
+		  formData.append("orderId",orders[index].id);
+		  formData.append("action",action);
+		  let response =  await  fetch('/shipper/orders/action', {
+		    method: "POST", 
+		    body: formData
+		  }); 
+		  if (response.status == 200) {
 		    response.json().then(() => updateView(action,orders[index].id));
 		    //reload neu update ve 0
 		    //if(event.target.value==0){

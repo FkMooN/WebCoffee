@@ -1,10 +1,10 @@
 function handleChange(checkbox)
 {
 	if(checkbox.checked == true){
-        document.getElementById("remember").value="true";
+        document.getElementById("rememberCheckbox").value="true";
         console.log(true);
     }else{
-        document.getElementById("remember").value="false";
+        document.getElementById("rememberCheckbox").value="false";
         console.log(false);
    }
 }

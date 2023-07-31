@@ -2,6 +2,43 @@ package Helptools;
 import Exception.*;
 import java.util.regex.*;
 public class AccountValidator {
+	public static boolean isValidPhoneNumber(String s)
+    {
+        // The given argument to compile() method
+        // is regular expression. With the help of
+        // regular expression we can validate mobile
+        // number.
+        // The number should be of 10 digits.
+ 
+        // Creating a Pattern class object
+        Pattern p = Pattern.compile("^\\d{10}$");
+ 
+        // Pattern class contains matcher() method
+        // to find matching between given number
+        // and regular expression for which
+        // object of Matcher class is created
+        Matcher m = p.matcher(s);
+ 
+        // Returning boolean value
+        return (m.matches());
+    }
+    public static boolean isOnlyChaAndSpace(String str)
+	    {
+		System.out.println("str "+str);
+	       // String s=toKhongDau(str);
+	        String s=str;
+	        System.out.println("s "+s);
+	        for (int i = 0; i < s.length(); i++) {
+	        	 
+	            // Checking the character for not being a
+	            // letter,digit or space
+	            if ((!Character.isLetter(s.charAt(i)))&&(!Character.isWhitespace(s.charAt(i)))) {
+	            	System.out.println("sai "+"i: "+i+" "+s.charAt(i));
+	            	return false;
+	            }
+	        }
+			return true;   
+	    }
 	public static boolean isValidUsername(String name)
     {
   

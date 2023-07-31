@@ -40,7 +40,7 @@ popUpWin = open(URLStr,'popUpWin', 'toolbar=no,location=no,directories=no,status
                 <i class="icon-reorder shaded"></i>
             </a>
 
-              <a class="brand" href="/index.html">
+              <a class="brand" th:href=@{/admin/orders/views}>
                     Admin
               </a>
 
@@ -49,16 +49,7 @@ popUpWin = open(URLStr,'popUpWin', 'toolbar=no,location=no,directories=no,status
                     <li><a href="#">
                         Hello <span th:text=${userName}></span>
                     </a></li>
-                    <li class="nav-user dropdown">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                            <b class="caret"></b>
-                        </a>
-                        <ul class="dropdown-menu">
-                            <li><a href="/change-password.html">Change Password</a></li>
-                            <li class="divider"></li>
-                            <li><a href="/logout.html">Logout</a></li>
-                        </ul>
-                    </li>
+                 
                 </ul>
             </div><!-- /.nav-collapse -->
         </div>
@@ -115,8 +106,11 @@ popUpWin = open(URLStr,'popUpWin', 'toolbar=no,location=no,directories=no,status
 	    <div class="module">
 							<div class="module-head">
 								<h3>Pending Orders</h3>
-							
+								<div class="module_search">
+									<input class="m-0" type="text" placeholder="Tìm kiếm">
+								</div>
 							</div>
+							
 							<div class="module-body table">
 	
 									<!-- <div class="alert alert-error">
@@ -130,7 +124,7 @@ popUpWin = open(URLStr,'popUpWin', 'toolbar=no,location=no,directories=no,status
 										<!-- <li class="col-2">Tất Cả</li> -->
 						
 									  </ul>
-								<table cellpadding="0" cellspacing="0" border="0" class="datatable-1 table table-bordered table-striped	 display table-responsive " >
+								<table cellpadding="0" cellspacing="0" border="0"  >
 									<thead>
 										<tr>
 											<th>#</th>
@@ -148,14 +142,17 @@ popUpWin = open(URLStr,'popUpWin', 'toolbar=no,location=no,directories=no,status
 										</tr>
 									</thead>
 								
-<tbody>
+<tbody id="body"style="display: none;">
 <!-- 							 -->
-								<tr th:each="order, iter : ${orders}" >
-									<td th:text=${iter.count}></td>
-									<td th:text=${users[iter.count-1].userName}></td>
-									<td th:text=${users[iter.count-1].email}></td>
-									<td th:text=${users[iter.count-1].phone}></td>
-									<td th:text=${order.receiverAddress}></td>
+								<tr  class="search_value" th:each="order, iter : ${orders}" >
+									<th:block  th:if= "${order.state!=2}">
+
+							
+									<td  th:text=${iter.count}></td>
+									<td th:data-state='|${order.state}|'class="search_name" th:text=${users[iter.count-1].userName}></td>
+									<td class="search_email" th:text=${users[iter.count-1].email}></td>
+									<td class="search_phone" th:text=${users[iter.count-1].phone}></td>
+									<td  th:text=${order.receiverAddress}></td>
 									<td><button style="display: inline-block;width: 100%;" th:onclick="showOrderDetail([[${iter.index}]])">Xem</button></td>
 									
 									<td th:text=${order.orderDate}></td>
@@ -165,14 +162,15 @@ popUpWin = open(URLStr,'popUpWin', 'toolbar=no,location=no,directories=no,status
 										<button data-value="3" disabled >Delivering
 										</button>
 										</td>
-									<td class="btn_status" th:if="${order.state==1}">
-									<button data-value="1" disabled >Declined
+									<td class="btn_status" th:if="${order.state==0}">
+									<button data-value="0" disabled > Accepted 
 									</button>
 									</td>
-									<td class="btn_status"  th:if="${order.state==2}">
-										<button data-value="2" disabled >Accepted
+									<td class="btn_status"  th:if="${order.state==1}">
+										<button data-value="1" disabled >Declined
 										</button>
 									</td>
+									
 									<td class="btn_status"  th:if="${order.state==4}">
 										<button data-value="4" disabled>Delivered
 										</button>
@@ -180,13 +178,19 @@ popUpWin = open(URLStr,'popUpWin', 'toolbar=no,location=no,directories=no,status
 									<td class="btn_status"  th:if="${order.state==5}">
 										<button data-value="5" disabled>Delivery error
 										</button>
-										<button data-value="5" th:onclick="doActionOrder([[${iter.count-1}]],1)">Send Back
+										<button data-value="5" th:onclick="doActionOrder([[${iter.count-1}]],0)">Send Back
 										</button>
 									</td>
-									<td class="btn_status"  th:if="${order.state==0}">
-									<button data-value="0" th:id="${'a'+order.id}" th:onclick="doActionOrder([[${iter.count-1}]],1)">Accept</button>
+									<td class="btn_status"  th:if="${order.state==6}">
+									<button data-value="6" th:id="${'a'+order.id}" th:onclick="doActionOrder([[${iter.count-1}]],0)">Accept</button>
 									</button>
 									</td>
+								
+								</th:block>
+									<!-- <td class="btn_status"  th:if="${order.state==0}">
+										<button data-value="6" th:id="${'a'+order.id}" th:onclick="doActionOrder([[${iter.count-1}]],1)">Accept</button>
+										</button>
+										</td> -->
 									
 								</tr>
 										
@@ -271,7 +275,58 @@ popUpWin = open(URLStr,'popUpWin', 'toolbar=no,location=no,directories=no,status
 	</div>
 	</div>
 	<script th:inline="javascript">
-		
+		const search_key = document.querySelectorAll('.search_value')
+			const module_search = document.querySelector('.module_search input')
+			const search_name = document.querySelectorAll('.search_name')
+			const search_phone = document.querySelectorAll('.search_phone')
+			const search_email = document.querySelectorAll('.search_email')
+	
+	module_search.addEventListener('keypress',(e)=>
+	{
+		const value = e.target.value.toLowerCase().trim();
+		var currentActive= document.querySelector('.module__statu .active')
+		console.log("currentActive"+currentActive.dataset.value)
+		if(e.keyCode===13||e.which===13)
+ 		{
+			console.log("search_name.length: "+search_name.length)
+			var len=search_name.length;
+			for (let i = 0; i < len; i++) {
+				var search_name_item=search_name[i];
+				var search_phone_item=search_phone[i];
+				var search_email_item=search_email[i];
+				//console.log("search_name_item"+search_name_item)
+				//console.log("currentActive value"+currentActive.dataset.value)
+				//console.log("search_name_item.dataset.state"+search_name_item.dataset.state)
+				if((currentActive.dataset.value!=search_name_item.dataset.state)||(search_name_item.innerHTML.toLowerCase().search(value)==-1&&search_phone_item.innerHTML.toLowerCase().search(value)==-1&&search_email_item.innerHTML.toLowerCase().search(value)==-1))
+				{
+					search_name_item.parentElement.style.display='none'
+				}
+				else {
+					console.log("search_name_item.dataset.state"+search_name_item.dataset.state)
+					search_name_item.parentElement.style.display='table-row'
+				}
+			}
+			// search_name.forEach(i=>
+			// {
+				
+			// 	if(i.innerHTML.toLowerCase().search(value)!=-1)
+			// 	{
+				
+			// 		i.parentElement.style.display='table-row'
+			// 		console.log(i.innerHTML)
+			// 	}
+			// 	else 
+			// 	{
+	
+			// 		i.parentElement.style.display='none'
+				
+
+			// 	}
+				
+			// })
+
+  		}
+	})
 		const modal__admin = document.querySelector('.modal__admin')
 		const modal__admin_container = document.querySelector('.modal__admin-container')
 		const main_table = document.querySelector('.main_table')
@@ -282,19 +337,20 @@ popUpWin = open(URLStr,'popUpWin', 'toolbar=no,location=no,directories=no,status
 	const btn_sta= document.querySelectorAll('.btn_status button')
 	btn_sta.forEach(i=>
 	  {
-	
-		if(i.dataset.value==0)
+
+		if(i.dataset.value==6)
 		{
+
 			i.parentElement.parentElement.style.display = 'table-row'
 			i.parentElement.previousElementSibling.previousElementSibling.firstChild.disabled=true
 		}
-		else if(i.dataset.value==1||i.dataset.value==2)
+		else if(i.dataset.value==0||i.dataset.value==1)
 		{
 			i.parentElement.previousElementSibling.previousElementSibling.firstChild.disabled=true
 			i.parentElement.parentElement.style.display = 'none'
-
 		}
 		else{
+		
 			i.parentElement.parentElement.style.display = 'none'
 		}
 
@@ -302,6 +358,7 @@ popUpWin = open(URLStr,'popUpWin', 'toolbar=no,location=no,directories=no,status
 		
 	  })
 	  const module__status_parent = document.querySelectorAll('.module__statu')[0]
+	  console.log(module__status_parent)
 	  const wai=[]
 	  const acc=[]
 	  const declined = []
@@ -310,18 +367,18 @@ popUpWin = open(URLStr,'popUpWin', 'toolbar=no,location=no,directories=no,status
 	  const deliErr = []
 	  btn_sta.forEach(i=>{
 
-		if(i.dataset.value==0)
+		if(i.dataset.value==6)
 		{
 	
 			 wai.push(i)
 		
 		}
-		if(i.dataset.value==1)
+		if(i.dataset.value==0)
 		{
 	
 		 acc.push(i)
 		}
-		if(i.dataset.value==2)
+		if(i.dataset.value==1)
 		{
 	
 			declined.push(i)
@@ -344,14 +401,16 @@ popUpWin = open(URLStr,'popUpWin', 'toolbar=no,location=no,directories=no,status
 
 
 	  })
-	  var htmls = `	<li data-value="0" class="col-2 active" style="width: 16.6667%; display: flex;align-items: center;padding: 0 6px;">Waiting for confirmation(${wai.length})</li>
-					<li data-value="2" class="col-2" style="width: 16.6667%; display: flex;align-items: center;padding: 0 6px;">Accepted(${acc.length})</li>
-					<li data-value="1" class="col-2" style="width: 16.6667%; display: flex;align-items: center;padding: 0 6px;">Declined(${declined.length})</li>
-					<li data-value="3" class="col-2" style="width: 16.6667%; display: flex;align-items: center;padding: 0 6px;">Delivering(${delivering.length})</li>
-					<li data-value="4" class="col-2" style="width: 16.6667%; display: flex;align-items: center;padding: 0 6px;">Delivered(${delivered.length})</li>
-					<li data-value="5" class="col-2" style="width: 16.6667%; display: flex;align-items: center;padding: 0 6px;">Delivery Error(${deliErr.length/2})</li>
+	  var htmls = `	<li data-value="6" class="col-2 active" style="width: 16.6667%; display: flex;align-items: center;padding: 0 6px;">Waiting for confirmation <span style ="color:red">(${wai.length})</span></li>
+					<li data-value="0" class="col-2" style="width: 16.6667%; display: flex;align-items: center;padding: 0 6px;">Accepted <span style ="color:red">(${acc.length})</span></li>
+					<li data-value="1" class="col-2" style="width: 16.6667%; display: flex;align-items: center;padding: 0 6px;">Declined <span style ="color:red">(${declined.length})</span></li>
+					<li data-value="3" class="col-2" style="width: 16.6667%; display: flex;align-items: center;padding: 0 6px;">Delivering <span style ="color:red">(${delivering.length})</span></li>
+					<li data-value="4" class="col-2" style="width: 16.6667%; display: flex;align-items: center;padding: 0 6px;">Delivered <span style ="color:red">(${delivered.length})</span></li>
+					<li data-value="5" class="col-2" style="width: 16.6667%; display: flex;align-items: center;padding: 0 6px;">Delivery Error <span style ="color:red">(${deliErr.length/2})</span></li>
 	  `
 	  module__status_parent.innerHTML = htmls
+	  var body=document.getElementById("body");
+	  body.style.display="table-row-group";
 	  const module__status = document.querySelectorAll('.module__statu li')
 	  var currentClick
 	  module__status.forEach(module__sta=>{
@@ -366,12 +425,8 @@ popUpWin = open(URLStr,'popUpWin', 'toolbar=no,location=no,directories=no,status
 			btn_sta.forEach(i=>
 	 	 {
 
-		if(module__sta.dataset.value == 6)
-		{
-			i.parentElement.parentElement.style.display = 'table-row'
-
-		}
-		else if( module__sta.dataset.value === i.dataset.value)
+	
+	 if( module__sta.dataset.value === i.dataset.value)
 		{
 			i.parentElement.parentElement.style.display = 'table-row'
 
@@ -472,11 +527,11 @@ popUpWin = open(URLStr,'popUpWin', 'toolbar=no,location=no,directories=no,status
 
 		}
 	
-	const ACCEPT_TYPE=1,CANCLE_TYPE=2;
-	async function doActionOrder(index,action){
-	
-		var orders=/*[[${orders}]]*/ 
 
+	async function doActionOrder(index,action){
+	console.log(action)
+		var orders=/*[[${orders}]]*/ 
+		console
 		let formData = new FormData(); 
 		  formData.append("orderId",orders[index].id);
 		  formData.append("action",action);

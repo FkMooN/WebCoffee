@@ -149,14 +149,21 @@
                       </ul>
                     </div>
                   </div>
+                  <th:block th:if="${#lists.size(productList)!=0}">
                   <div class="row__product-container-route">
                     <span class="row__product-numpage">
                        <span style="color: #FA7A31;"><b>[[${currentPage}]]</b></span><b>/[[${totalPages}]]</b>
                     </span>
+                    
                     <button ><a th:href="@{'?pageNo='+${((currentPage==1)||(currentPage=='1'))?currentPage:(currentPage-1)}}"><i class="fa-sharp fa-solid fa-caret-left"></i></a></button>
                     <button><a th:href="@{'?pageNo='+${#strings.equals(currentPage, totalPages)?totalPages:(currentPage-(-1))}}"><i class="fa-sharp fa-solid fa-caret-right"></i></a></button>
+         
                   </div>
+                </th:block>
                 </div>
+                <th:block th:if="${#lists.size(productList)==0}">
+                    <span style="font-size: 14px;color: red ;">Không tìm thấy sản phẩm cho từ khóa "[[${searchKey}]]"</span>
+                  </th:block>
                   <div class="row row__products">
                     <div th:each="product,iter:${productList}" class="col-md-3 col-sm-6">
                       <div class="card" style="width: 100%;" th:onclick="return handleClick([[${product.id}]])
@@ -399,10 +406,11 @@
     let number3=numFloat.toLocaleString('vi-VN');
     return number3
 }
-    const price = document.querySelectorAll('.price')
+const price = document.querySelectorAll('.price')
     price.forEach((e)=>
     {
-      var x = e.innerHTML;   
+      var x = Number.parseInt(e.innerHTML);
+      console.log(x)   
       e.innerHTML = getChangeMomneyFormat(x)
     })
     const logBut = document.querySelector('.navbar__user-dropdown')
@@ -415,11 +423,21 @@
     const navbar__search = document.querySelector('.navbar__search input')
 navbar__search.addEventListener('keypress',(e)=>
 {
-  if(e.keyCode===13||e.which===13)
+  const value = e.target.value.trim()
+
+
+    if(e.keyCode===13||e.which===13)
   {
-      document.location='/product/search/'+e.target.value
+    if(value =='')
+  {
+    alert('Vui Lòng Nhập Từ Khóa Cần Tìm')
+    return
+  }
+      document.location='/product/search/'+value
   
   }
+
+ 
 
 })
 
@@ -431,8 +449,9 @@ navbar__search.addEventListener('keypress',(e)=>
         const navbar__search_list = document.querySelector('.navbar__search-list')
         modal.classList.add('active')
         navbar__search_list.classList.add('active')
+
         const key = e.target.value
-       
+        
         fetch(`http://localhost:8888/search/${key}`)
         .then(res =>res.json())
         .then(datas=>{

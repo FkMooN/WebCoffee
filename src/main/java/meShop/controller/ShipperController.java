@@ -62,10 +62,13 @@ public class ShipperController {
 		int action=-1;
 		switch (page) {
 			case "all":
-			action=1;
+			action=0;
 				break;
 			case "me":
 				action=3;
+				break;
+			case "failed":
+				action=5;
 				break;
 			default:
 				break;
@@ -96,11 +99,12 @@ public class ShipperController {
 		model.addAttribute("orders", orders);
 		model.addAttribute("users", users);
 		model.addAttribute("orderDetails", orderDetails);
-			if(action==1) return "ShipperOrder"; else return "ShipperMyOrder";
+			if(action==0) return "ShipperOrder";else if(action==3) return  "ShipperMyOrder"; else return "ShipperOrderFail";
 		}
 		else {
-			if(action==1) return "redirect:/account/"+ConstantPageId.ORDER_ACCEPTED_SHIPPER_PAGE+"/login";
-			else return "redirect:/account/"+ConstantPageId.ORDER_DELIVERI_SHIPPER_PAGE+"/login";	
+			if(action==0) return "redirect:/account/"+ConstantPageId.ORDER_ACCEPTED_SHIPPER_PAGE+"/login";
+			else if(action==3) return "redirect:/account/"+ConstantPageId.ORDER_DELIVERI_SHIPPER_PAGE+"/login";
+			else return "redirect:/account/"+ConstantPageId.ORDER_FAILED_SHIPPER_PAGE+"/login";	
 		}
 	}	
 	@PostMapping("/orders/action") 

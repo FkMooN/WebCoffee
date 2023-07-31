@@ -39,16 +39,16 @@ popUpWin = open(URLStr,'popUpWin', 'toolbar=no,location=no,directories=no,status
                 <i class="icon-reorder shaded"></i>
             </a>
 
-              
-			<a class="brand" th:href=@{/shipper/views}>
-				Shipper
-		  </a>
+              <a class="brand" th:href=@{/shipper/views}>
+                    Shipper
+              </a>
 
             <div class="nav-collapse collapse navbar-inverse-collapse">
                 <ul class="nav pull-right">
                     <li><a href="#">
                         Hello <span th:text=${userName}></span>
                     </a></li>
+                
                 </ul>
             </div><!-- /.nav-collapse -->
         </div>
@@ -74,7 +74,6 @@ popUpWin = open(URLStr,'popUpWin', 'toolbar=no,location=no,directories=no,status
                     My Orders
                 </a>
             </li>
-
 			<li>
                 <a href="/shipper/views?page=failed">
                     <i class="menu-icon icon-group"></i>
@@ -106,7 +105,7 @@ popUpWin = open(URLStr,'popUpWin', 'toolbar=no,location=no,directories=no,status
 
 	    <div class="module">
 							<div class="module-head">
-								<h3>Pending Orders</h3>
+								<h3>Error Orders</h3>
 								<div class="module_search">
 									<input style="margin:0" class="m-0" type="text" placeholder="Tìm kiếm">
 								</div>
@@ -135,24 +134,23 @@ popUpWin = open(URLStr,'popUpWin', 'toolbar=no,location=no,directories=no,status
 <tbody>
 <!-- 							 -->
 								<tr th:each="order, iter : ${orders}" >
-									<td th:text=${iter.count}></td>
-									<td class="search_name" th:text=${users[iter.count-1].userName}></td>
-									<td class="search_email" th:text=${users[iter.count-1].email}></td>
-									<td class="search_phone" th:text=${users[iter.count-1].phone}></td>
-									<td th:text=${order.receiverAddress}></td>
-									<td><button style="display: inline-block;width: 100%;" th:onclick="showOrderDetail([[${iter.index}]])">Xem</button></td>
 									
-									<td th:text=${order.orderDate}></td>
+										<td th:text=${iter.count}></td>
+										<td class="search_name" th:text=${users[iter.count-1].userName}></td>
+										<td class="search_email" th:text=${users[iter.count-1].email}></td>
+										<td class="search_phone" th:text=${users[iter.count-1].phone}></td>
+										<td th:text=${order.receiverAddress}></td>
+										<td><button style="display: inline-block;width: 100%;" th:onclick="showOrderDetail([[${iter.index}]])">Xem</button></td>
+										
+										<td th:text=${order.orderDate}></td>
+										
 									
-								
-									<td>
-									<button th:onclick="doActionOrder([[${iter.count-1}]],3)">Nhận Giao</button>
-									</button>
-									</td>
-									<td th:if="order.state==3">
-										<button disabled >Nhận Giao</button>	
-										</button>
-										</td>
+					
+										<td >
+											<button disabled >Giao lỗi</button>	
+											</button>
+											</td>
+						
 									
 								</tr>
 										

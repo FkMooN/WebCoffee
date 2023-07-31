@@ -18,6 +18,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import meShop.Constant.ConstantPageId;
 import meShop.converter.MainConverter;
+import meShop.converter.ProductConverter;
 import meShop.dto.ProductDTO;
 import meShop.model.CartItem;
 import meShop.model.CartItemList;
@@ -31,6 +32,7 @@ import meShop.service.ShoppingCartService;
 @RequestMapping(value = "/product")
 class ProductController{
     @Autowired ProductService productService;
+	@Autowired ProductConverter productConverter;
     @Autowired CookieService cookieService;
     @Autowired SessionService sessionService;
     @Autowired ShoppingCartService shoppingCartService;
@@ -61,7 +63,11 @@ class ProductController{
 		List<String> productImages=new ArrayList<>();
 		model.addAttribute("productList", productDTOs);
 		productDTOs.forEach(productDTO->{
+			if(productDTO.getImage()!=null)
 			productImages.add(Base64.getEncoder().encodeToString(productDTO.getImage()));
+			else {
+				productImages.add("");
+			}
 		});
 		model.addAttribute("productImages", productImages);
         return "Product";
@@ -76,7 +82,11 @@ class ProductController{
 		List<String> productImages=new ArrayList<>();
 		model.addAttribute("productList", productDTOs);
 		productDTOs.forEach(productDTO->{
+			if(productDTO.getImage()!=null)
 			productImages.add(Base64.getEncoder().encodeToString(productDTO.getImage()));
+			else {
+				productImages.add("");
+			}
 		});
 		model.addAttribute("productImages", productImages);
         return "Product";
@@ -91,7 +101,13 @@ class ProductController{
 		List<String> productImages=new ArrayList<>();
 		model.addAttribute("productList", productDTOs);
 		productDTOs.forEach(productDTO->{
-			productImages.add(Base64.getEncoder().encodeToString(productDTO.getImage()));
+			if(productDTO.getImage()!=null)
+			{
+				productImages.add(Base64.getEncoder().encodeToString(productDTO.getImage()));
+			}
+			else {
+				productImages.add("");
+			}
 		});
 		model.addAttribute("productImages", productImages);
         return "Product";
@@ -112,6 +128,7 @@ class ProductController{
 		int total=shoppingCartService.getAllCartItem().size();
 		System.out.println("total"+total);
 		model.addAttribute("totalCartItems", total);
+		model.addAttribute("searchKey", key);
         return "Product";
     }
     @GetMapping(value = "/{id}")
@@ -119,9 +136,10 @@ class ProductController{
     	initCart();
 		model.addAttribute("totalCartItems", shoppingCartService.getAllCartItem().size());
 		ProductModel p=productService.getProductById(id);
-		String img=Base64.getEncoder().encodeToString(p.getImage());
-		String img2=Base64.getEncoder().encodeToString(p.getImage());
-		String img3=Base64.getEncoder().encodeToString(p.getImage());
+		ProductDTO dto=productConverter.toDTO(p);
+		String img=dto.getStrImage();
+		String img2=dto.getStrImage2();
+		String img3=dto.getStrImage3();
 		model.addAttribute("product", p);
 		model.addAttribute("productImg", img);
 		model.addAttribute("productImg2", img2);

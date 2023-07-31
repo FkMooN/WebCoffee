@@ -134,7 +134,7 @@
               
             </td>
             <td>
-              <input th:value=${cartItem.quantity} th:field="*{cartItems[__${iter.index}__].quantity}" id="quantity" name="quantity" type="number"  th:onchange="submitFormUpdateQuantity(event,[[${cartItem.productId}]])"  >
+              <input th:value=${cartItem.quantity} th:field="*{cartItems[__${iter.index}__].quantity}" id="quantity" name="quantity" type="number"  disabled  >
             </td>
             <td class="cart__page--price" th:text="*{cartItems[__${iter.index}__].price}"></td>
           </tr>
@@ -153,21 +153,21 @@
             <input id="fullNameInput" type="hidden" th:value="${fullName}"> 
             <input id="addressInput" type="hidden" th:value="${address}"> 
             <input id="phoneInput" type="hidden" th:value="${phone}"> 
-            <th:block th:if="${address!=''||phone == ''}">
+            <th:block th:if="${address!='' && phone != ''}">
               <span >
                 <b>Họ Và Tên: </b><th:block th:utext="${fullName}"></th:block>; 
-                <b>Địa Chỉ:</b><th:block th:utext="${address}"></th:block>
+                <b>Địa Chỉ:</b><th:block th:utext="${address}"></th:block>;
                 <b>Điện Thoại: </b> <th:block th:utext="${phone}"></th:block>
-                <input id="old" th:disabled="${address == ''}" disabled onchange="cancleExceptMe('new')" type="checkbox"> 
+                <input id="old" th:disabled="${address == ''}" disabled onchange="cancleExceptMe('new')" type="checkbox" checked> 
               </span> 
             </th:block>
             <th:block th:if="${address==''||phone == ''}">
-              <span ><a href="/account/view/5"><b>Vui lòng nhập đầy đủ thông tin</b></a></span>
+              <span ><a href="/account/view/1"><b>Vui lòng nhập đầy đủ thông tin</b></a></span>
           </th:block>
             
           
             <p class="check--out__address-add">Địa chỉ khác</p>  
-           <span id="orderRev" style="display: none"><b>Họ Và Tên: </b><b id="orderFullName"></b>; <b>Địa Chỉ:</b><b id="orderAddress"></b> ; <b>Họ Và Tên: </b><b id="orderPhone"></b>;<input id="new" onchange="cancleExceptMe('old')"type="checkbox"></span> 
+           <span id="orderRev" style="display: none"><b>Họ Và Tên: </b><b id="orderFullName"></b>; <b>Địa Chỉ:</b><b id="orderAddress"></b> ; <b>Số điện thoại: </b><b id="orderPhone"></b> <input id="new" onchange="cancleExceptMe('old')"type="checkbox"></span> 
            <div class="form-check">
             <input class="form-check-input" type="radio" name="flexRadioDefault" id="paypal_input" checked>
             <label  class="form-check-label" for="flexRadioDefault1" style="font-size: 14px;">
@@ -280,7 +280,7 @@
           <div class="modal__container-form">
             <div class="modal__container-form_per">
               <input id="modal__container-form_name" class="modal__container-form_name" type="text" th:value="${fullName!='chưa có'?fullName:''}" placeholder="Tên người nhận">
-              <input class="modal__container-form_phone" type="text" th:value="${phone}" placeholder="Số Điện Thoại"
+              <input class="modal__container-form_phone" id="modal__container-form_phone" type="text" th:value="${phone}" placeholder="Số Điện Thoại"
               onkeypress="if ( isNaN(this.value + String.fromCharCode(event.keyCode) )) return false;">
             </div>
             <div class="modal__container-form_add">
@@ -310,6 +310,7 @@
           <form ACTION="#" id="formCheckout"th:action="@{/shopping-cart/checkout}" th:object="${cartItemsDTO}" method="POST">
           <input type="hidden" id="receiverName" name="receiverName"/>
           <input type="hidden" id="receiverAddress" name="receiverAddress"/>
+          <input type="hidden" id="receiverPhone" name="receiverPhone"/>
           <input id="total_input" type="hidden" name="totalPrices">
           <input id="input_val" type="hidden" name="paypal" value="true"/>
      <!-- ADD ALL THE OTHER FIELDS THAT ARE PART OF THE OBJECT -->
@@ -317,7 +318,10 @@
         </div>
       </div>
     </div>
+    <script th:inline="javascript" th:src="@{/js/cart.js}"></script>
+    <script th:inline="javascript" th:src="@{/js/jquery.js}"></script>
     <script th:inline="javascript">
+
     const navbar__user = document.querySelector('.navbar__user-dropdown_list')
     const logBut =  document.querySelector('.navbar__user-link')
     var a=/*[[${cartItemsDTO}]]*/
@@ -385,7 +389,7 @@ if (!(/[^a-zA-Z0-9\-]/.test(name_input.value)))
   speAdd.value=''
   return
 }
-  else if(phone_input.value=='')
+  else if(phone_input.value.trim()=='')
   {
   alert('Vui Lòng Nhập Số Điện Thoại')
     return
@@ -396,22 +400,22 @@ else
     console.log("data: "+speAdd.value);
     var orderRev=document.getElementById("orderRev");
     orderRev.style.display = "block";
-    var orderFullName=document.getElementById("orderFullName");
-    var orderAddress=document.getElementById("orderAddress");
-    var orderPhone=document.getElementById("orderPhone");
+    var orderFullName=document.querySelector("#orderFullName");
+    var orderAddress=document.querySelector("#orderAddress");
+    var orderPhone=document.querySelector("#orderPhone");
     orderAddress.innerHTML=speAdd.value;
     // orderAddress.innerHTML=.value;
     var model_name_rev=document.getElementById("modal__container-form_name");
     var model_phone_rev=document.getElementById("modal__container-form_phone");
-    if(model_phone_rev.value==""){
-    	var phoneInput=document.getElementById("phoneInput");
+    if(model_phone_rev.value!=""){
+    
     	//orderPhone
-    	orderPhone.innerText=phoneInput.value;
+    	orderPhone.innerHTML=phone_input.value;
     }
-    if(model_name_rev.value==""){
-    	var fullNameInput=document.getElementById("fullNameInput");
+    if(model_name_rev.value!=""){
+    	
     	//orderFullName
-    	orderFullName.innerText=fullNameInput.value;
+    	orderFullName.innerText=name_input.value;
     } 
 }
     //alert("okAddAddress")
@@ -423,6 +427,8 @@ else
     const inputAddSins = document.querySelectorAll('.modal__container-form_add-address_control select')
     var fullNameInput=document.getElementById("fullNameInput");
   var addressInput=document.getElementById("addressInput");
+  var phoneInput=document.getElementById("phoneInput")
+  console.log()
   inputAdd.onfocus = (e)=>
   {
 	  console.log("onclick")
@@ -436,13 +442,14 @@ else
 		var orderFullName=document.getElementById("orderFullName");
 		var orderAddress=document.getElementById("orderAddress");
 		var orderPhone=document.getElementById("orderPhone");
+
 		if(oldCheckbox.checked){  
 			console.log("oldCheckbox.checked");
-			submitOrderToController(fullNameInput.value,addressInput.value);
+			submitOrderToController(fullNameInput.value,addressInput.value,phoneInput.value);
 		} 
 		if(newCheckbox.checked){
 			console.log("newCheckbox.checked");
-			submitOrderToController(orderFullName.innerHTML,orderAddress.innerHTML);
+			submitOrderToController(orderFullName.innerHTML,orderAddress.innerHTML,orderPhone.innerHTML);
 		}
     if(!oldCheckbox.checked&&!newCheckbox.checked)
     {
@@ -452,7 +459,7 @@ else
 		//console.log(orderFullName.innerHTML);
 		//console.log(orderAddress.innerText);
 	}
-	async function submitOrderToController(name,address){
+	async function submitOrderToController(name,address,phone){
     console.log("")
 		var CartItemsDTO=/*[[${cartItemsDTO}]]*/
 			console.log(CartItemsDTO);
@@ -464,8 +471,11 @@ else
 		console.log("address: "+address);
 		var inputReceiverAddress=document.getElementById("receiverAddress");
 		inputReceiverAddress.value=address;
+	
 		var inputReceiverName=document.getElementById("receiverName");
 		inputReceiverName.value=name; 
+    var inputReceiverPhone=document.getElementById("receiverPhone");
+		inputReceiverPhone.value=address; 
 		var formCheckout=document.getElementById("formCheckout");
 		formCheckout.submit();
 	}
@@ -500,7 +510,8 @@ else
 const price = document.querySelectorAll('.cart__page--price')
     price.forEach((e)=>
     {
-      var x = e.innerHTML;   
+      var x = Number.parseInt(e.innerHTML);
+      console.log(x)   
       e.innerHTML = getChangeMomneyFormat(x)
     })
     </script>

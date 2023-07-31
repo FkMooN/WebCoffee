@@ -130,9 +130,9 @@
 								  </select> -->
 								  <ul class="module__statu row" style="display: flex;list-style-type: none;margin:4px 0;padding: 0; font-size: 14px;cursor: pointer;">
 									<!-- <li class="col-2">Tất Cả</li> -->
-									<li  data-value="6" class="col-1 active">Tất Cả</li>
-									<li data-value="0" class="col-2">Đơn hàng chờ xác nhận</li>
-									<li data-value="2" class="col-2">Đơn đã được duyệt</li>
+									<li  data-value="7" class="col-1 active">Tất Cả</li>
+									<li data-value="6" class="col-2">Đơn hàng chờ xác nhận</li>
+									<li data-value="0" class="col-2">Đơn đã được duyệt</li>
 									<li data-value="1" class="col-1">Đã Hủy</li>	
 									<li data-value="3" class="col-2">Đang giao</li>
 									<li data-value="4" class="col-2">Đã giao</li>
@@ -158,6 +158,8 @@
 							<tbody>
 
 								<tr class="order_product" th:each="order, iter : ${orders}" >
+									<th:block  th:if="${order.state!=2}">
+
 									<td th:text=${iter.count}></td>
 									<td th:text=${userName}></td>
 								
@@ -168,6 +170,8 @@
 									<td th:text=${order.stateName}>
 
 									</td>
+							
+								
 									<td th:if="${order.state==5}">
 										<button class="btn_sta" data-value="5" disabled>Giao Thất Bại
 										</button>
@@ -184,15 +188,17 @@
 										<button class="btn_sta"  data-value="1" disabled>Đã Hủy
 										</button>
 									</td>
-									<td th:if="${order.state==2}">
-										<button class="btn_sta"  data-value="2" disabled>Đơn đã được duyệt
+									<td th:if="${order.state==0}">
+										<button class="btn_sta"  data-value="0" disabled>Đơn đã được duyệt
 										</button>
 									</td>
-										<td th:if="${order.state==0}">
-										<button class="btn_sta" data-value="0" th:id="${'c'+order.id}" th:onclick="doActionOrder([[${iter.count-1}]],1)">Hủy Đơn Hàng
+										<td th:if="${order.state==6}">
+										<button class="btn_sta" data-value="6" th:id="${'c'+order.id}" th:onclick="doActionOrder([[${iter.count-1}]],1)">Hủy Đơn Hàng
 										</button>
 										</td>
+								</th:block>
 									
+					
 								</tr>
 										
 
@@ -365,6 +371,7 @@ function getChangeMomneyFormat(price){
 
 		const CANCLE_TYPE=2;
 		async function doActionOrder(index,action){
+			console.log(action)
 			let result = confirm('Bạn Chắc Chứ?')
 			if(result)
 			{
@@ -410,7 +417,7 @@ function getChangeMomneyFormat(price){
 		}
 		btn_sta.forEach(i=>
 	  {
-		if(i.dataset.value==0||i.dataset.value==1||i.dataset.value==2)
+		if(i.dataset.value==6||i.dataset.value==0||i.dataset.value==1)
 		{
 		
 			i.parentElement.previousElementSibling.firstChild.disabled=true
@@ -429,7 +436,7 @@ function getChangeMomneyFormat(price){
 			currentClick.classList.add('active')
 			btn_sta.forEach(i=>
 	 	 {
-		if(module__sta.dataset.value == 6)
+		if(module__sta.dataset.value == 7)
 		{
 			i.parentElement.parentElement.style.display = 'table-row'
 		}

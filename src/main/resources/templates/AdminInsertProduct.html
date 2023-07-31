@@ -44,25 +44,16 @@ $("#suggesstion-box").hide();
                     <i class="icon-reorder shaded"></i>
                 </a>
     
-                  <a class="brand" href="/index.html">
-                        Admin
-                  </a>
+                <a class="brand" th:href=@{/admin/orders/views}>
+                    Admin
+              </a>
     
                 <div class="nav-collapse collapse navbar-inverse-collapse">
                     <ul class="nav pull-right">
                         <li><a href="#">
                             Hello <span th:text=${userName}></span>
                         </a></li>
-                        <li class="nav-user dropdown">
-                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                                <b class="caret"></b>
-                            </a>
-                            <ul class="dropdown-menu">
-                                <li><a href="/change-password.html">Change Password</a></li>
-                                <li class="divider"></li>
-                                <li><a href="/logout.html">Logout</a></li>
-                            </ul>
-                        </li>
+                  
                     </ul>
                 </div><!-- /.nav-collapse -->
             </div>

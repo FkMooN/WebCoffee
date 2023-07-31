@@ -80,7 +80,7 @@
                   <a class="navbar__user-link"><i class="fa-regular fa-user"></i></a>
                   <ul class="navbar__user-dropdown_list">
                     <li th:if="${userName}">Chào Mừng <span  th:text="${userName}"></span></li>
-                    <li th:if="${userName}!='GUEST'"><a href="">Tài Khoản</a></li>
+                    <li th:if="${userName}!='GUEST'"><a th:href="@{/account/view/5}">Tài Khoản</a></li>
                     <li th:if="${userName}!='GUEST'"><a th:href="@{/history/views}">Đơn Hàng</a></li>
                       <li th:if="${userName}=='GUEST'"><a th:href="@{/account/login}">Đăng Nhập</a></li>
                       <li th:if="${userName}!='GUEST'"><a th:href="@{/account/logout}">Đăng Xuất</a></li>
@@ -268,17 +268,26 @@
           })
         }
          else{
-          alert('Đã Thêm Sản Phẩm Vào Giỏ Hàng')
+          
           fetch("/shopping-cart/add/"+productId+"?num="+value+"&go=false");
-          window.location.reload(true)
+          
+          alert('Đã Thêm Sản Phẩm Vào Giỏ Hàng')
+          window.location.reload()
+          console.log('ncc')
          } 
       }
       const navbar__search = document.querySelector('.navbar__search input')
 
 navbar__search.addEventListener('keypress',function(e)
 {
+  const value = e.target.value.trim()
   if (event.key === "Enter") {  
-    document.location = '/product/search/'+navbar__search.value;
+    if(value =='')
+  {
+    alert('Vui Lòng Nhập Từ Khóa Cần Tìm')
+    return
+  }
+    document.location = '/product/search/'+value;
  		event.preventDefault();
      }
 })
@@ -365,13 +374,18 @@ navbar__search.addEventListener('keypress',function(e)
     let number3=numFloat.toLocaleString('vi-VN');
     return number3
 }
-price.innerHTML = getChangeMomneyFormat(price.innerHTML)
+ 
+price.innerHTML = getChangeMomneyFormat(Number.parseInt(price.innerHTML))
       // navbar__search.onblur = ()=>
       // {
       //   const navbar__search_list = document.querySelector('.navbar__search-list')
       //   navbar__search_list.classList.remove('active')
       // }
       //search
+      const handleSearchClick = (id)=>
+      {
+        document.location = '/product/'+id;
+      }
     </script>
     <!-- footer -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.1/jquery.min.js" integrity="sha512-aVKKRRi/Q/YV+4mjoKBsE4x3H+BkegoM/em46NNlCqNTmUYADjBbeNefNxYV7giUp0VxICtqdrbqU7iVaeZNXA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>

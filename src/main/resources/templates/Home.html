@@ -317,7 +317,8 @@ function getChangeMomneyFormat(price){
 const price = document.querySelectorAll('.price')
     price.forEach((e)=>
     {
-      var x = e.innerHTML;   
+      var x = Number.parseInt(e.innerHTML);
+      console.log(x)   
       e.innerHTML = getChangeMomneyFormat(x)
     })
    // search

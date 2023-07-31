@@ -87,46 +87,46 @@ public class AdminOrderController {
 		return "AdminOrder";
 	}
 	@PostMapping("/action") 
-	  public ResponseEntity handleActionOrders( @RequestParam("orderId") String orderId,@RequestParam("action") int action ) {
-		 //System.out.println("productId "+productId+" quantity "+quantity);
-		 //System.out.println("order action: "+action+" orderId: "+orderId);
-		 Map<String, Object> map = new LinkedHashMap<String, Object>();
-		 String userName=sessionService.get("USERNAME", "");
-		 if(userName.equals("")){
-			 map.put("status", 0);
-			 map.put("message", "no permission");
-			 return new ResponseEntity<>(map, HttpStatus.NOT_FOUND);
-		} 
-		UserModel user=userService.getUserByUserName(userName);
-		if(action!=2&&action!=1) {
-			map.put("status", 0);
-				map.put("message", "action no found");
-				return new ResponseEntity<>(map, HttpStatus.NOT_FOUND);
-		}
-		if(action==2){
-			if(user.getRole().getCode()!=0){
-				map.put("status", 0);
-				map.put("message", "no permission");
-				return new ResponseEntity<>(map, HttpStatus.NOT_FOUND);
-			}
-		}
-		if(action==1){
-			if(user.getRole().getCode()!=1){
-				map.put("status", 0);
-				map.put("message", "no permission");
-				return new ResponseEntity<>(map, HttpStatus.NOT_FOUND);
-			}
-		}
-		
-		OrderModel orderModel=orderService.getOrderById(Integer.parseInt(orderId)); 
-	    orderService.saveOrder(orderModel,action);
-		return ResponseEntity.status(HttpStatus.OK).body("1");
-
-
-
-
-		
+	public ResponseEntity handleActionOrders( @RequestParam("orderId") String orderId,@RequestParam("action") int action ) {
+	   //System.out.println("productId "+productId+" quantity "+quantity);
+	   //System.out.println("order action: "+action+" orderId: "+orderId);
+	   Map<String, Object> map = new LinkedHashMap<String, Object>();
+	   String userName=sessionService.get("USERNAME", "");
+	   if(userName.equals("")){
+		   map.put("status", 0);
+		   map.put("message", "no permission");
+		   return new ResponseEntity<>(map, HttpStatus.NOT_FOUND);
+	  } 
+	  UserModel user=userService.getUserByUserName(userName);
+	  if(action!=0&&action!=1) {
+		  map.put("status", 0);
+			  map.put("message", "action no found");
+			  return new ResponseEntity<>(map, HttpStatus.NOT_FOUND);
 	  }
+	  if(action==1){
+		  if(user.getRole().getCode()!=0){
+			  map.put("status", 0);
+			  map.put("message", "no permission");
+			  return new ResponseEntity<>(map, HttpStatus.NOT_FOUND);
+		  }
+	  }
+	  if(action==0){
+		  if(user.getRole().getCode()!=1){
+			  map.put("status", 0);
+			  map.put("message", "no permission");
+			  return new ResponseEntity<>(map, HttpStatus.NOT_FOUND);
+		  }
+	  }
+	  
+	  OrderModel orderModel=orderService.getOrderById(Integer.parseInt(orderId)); 
+	  orderService.saveOrder(orderModel,action);
+	  return ResponseEntity.status(HttpStatus.OK).body("1");
+
+
+
+
+	  
+	}
 	@GetMapping(value = "/details/{id}")
 	String getOrderDetail(Model model,@PathVariable("id") int id) {
 		OrderModel order=orderService.getOrderById(id);

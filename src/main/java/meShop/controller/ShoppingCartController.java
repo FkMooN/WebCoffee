@@ -123,7 +123,14 @@ public class ShoppingCartController {
 		List<String> cartItemImages = new ArrayList<>();
 		if (shoppingCartService.getAllCartItem().size() != 0)
 			shoppingCartService.getAllCartItem().forEach(cartItem -> {
-				cartItemImages.add(Base64.getEncoder().encodeToString(cartItem.getImgae()));
+				if(cartItem.getImgae()!=null)
+				{
+					cartItemImages.add(Base64.getEncoder().encodeToString(cartItem.getImgae()));
+
+				}
+				else {
+					cartItemImages.add("");
+				}
 			});
 		model.addAttribute("userName",sessionService.get("USERNAME")!=null?sessionService.get("USERNAME"):"GUEST");
 		model.addAttribute("cartItemImages", cartItemImages);
@@ -368,7 +375,7 @@ public class ShoppingCartController {
 			 orderDTO.setUserId(sessionService.get("USERID"));
 			 orderDTO.setReceiverAddress(receiverAddress);
 			 orderDTO.setReceiverName(receiverName);
-			 orderDTO.setState(0);
+			 orderDTO.setState(6);
 			 Long orderId=orderService.saveOrder(orderDTO);
 			 //paypal
 			 if(isPaypal) {

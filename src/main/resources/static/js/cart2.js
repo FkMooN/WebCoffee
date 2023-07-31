@@ -30,7 +30,7 @@ async function submitFormUpdateQuantity(event,productId) {
     }
 }
 function updateView(data){
-	$("#total").text(data.total);
+	$("#total").text(getChangeMomneyFormat(data.total));
 }
 function submitCheckout(){
 	 $("#checkoutForm").submit();

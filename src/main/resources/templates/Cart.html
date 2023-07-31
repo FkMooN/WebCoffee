@@ -71,10 +71,10 @@
                     <i class="navbar__search--icon fa-solid fa-magnifying-glass" style="color: white;"></i>
                 </div>
                 <div class="navbar__cart">
-                  <i class="navbar__cart--icon fa-solid fa-cart-shopping"></i>
-                  <span class="navbar__quantities">
-               
-                  </span>
+                  <a th:href="@{/shopping-cart/views}" class="navbar__cart--link" > <i class="navbar__cart--icon fa-solid fa-cart-shopping"></i>
+                    <span class="navbar__quantities">
+                      
+                    </span></a>
                 </div>
                 <div class="navbar__user-dropdown">
                   <a class="navbar__user-link"><i class="fa-regular fa-user"></i></a>
@@ -152,9 +152,16 @@
           
         </table>
       </div>
-      <div class=" container cart__page--check_out d-flex justify-content-end" >
-        <button class="cart__page__btn-cart-check" ><a th:href="@{/shopping-cart/checkout}">Mua Ngay</a></button>
-      </div>
+
+<th:block th:if="${total > 0}">
+  <div class=" container cart__page--check_out d-flex justify-content-end" >
+    <button class="cart__page__btn-cart-check" ><a th:href="@{/shopping-cart/checkout}">Mua Ngay</a></button>
+  </div>
+
+</th:block>
+       
+
+      
     
            
     </body>
@@ -231,7 +238,12 @@
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js" integrity="sha384-oBqDVmMz9ATKxIep9tiCxS/Z9fNfEXiDAYTujMAeBAsjFuCZSmKbSSUnQlmh/jp3" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/js/bootstrap.min.js" integrity="sha384-7VPbUDkoPSGFnVtYi0QogXtr74QeVeeIs99Qfg5YCF+TidwNdjvaKZX19NZ/e6oz" crossorigin="anonymous"></script>
     <script th:inline="javascript" th:src="@{/js/account.js}"></script>
+    <script th:inline="javascript" th:src="@{/js/main.js}"></script>
+    <script th:inline="javascript" th:src="@{/js/jquery.js}"></script>
+
+    <script th:inline="javascript" th:src="@{/js/cart2.js}"></script>
     <script th:inline="javascript">
+      
     
   /* code to run */
   document.addEventListener("DOMContentLoaded", function(){
@@ -252,12 +264,18 @@
         const navbar__search = document.querySelector('.navbar__search input')
 
         navbar__search.addEventListener('keypress',function(e)
-      {
-        if (event.key === "Enter") {  
-        document.location = '/product/search/'+navbar__search.value;
- 		    event.preventDefault();
-      }
-      })
+{
+  const value = e.target.value.trim()
+  if (event.key === "Enter") {  
+    if(value =='')
+  {
+    alert('Vui Lòng Nhập Từ Khóa Cần Tìm')
+    return
+  }
+    document.location = '/product/search/'+value;
+ 		event.preventDefault();
+     }
+})
 
 
 
@@ -286,7 +304,8 @@ navbar__search.addEventListener('keypress',(e)=>
 const price = document.querySelectorAll('.cart__page--price')
     price.forEach((e)=>
     {
-      var x = e.innerHTML;   
+      var x = Number.parseInt(e.innerHTML);
+      console.log(x)   
       e.innerHTML = getChangeMomneyFormat(x)
     })
          
